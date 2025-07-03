@@ -1,0 +1,12 @@
+local currentPlaceId = game.PlaceId
+
+local PLACE_ID_1 = 11156779721
+local PLACE_ID_2 = 7239319209
+
+if currentPlaceId == PLACE_ID_1 then
+    print("1")
+elseif currentPlaceId == PLACE_ID_2 then
+    print("2")
+else
+    game:GetService("Players").LocalPlayer:Kick("暂不支持该游戏")
+end
