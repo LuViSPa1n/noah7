@@ -4,7 +4,7 @@ game:GetService("ReplicatedStorage").devv.client.Handlers.ClientValidate:Destroy
 local Cerberus = loadstring(game:HttpGet("https://raw.githubusercontent.com/Jxereas/UI-Libraries/refs/heads/main/cerberus.lua"))()
 
 
-local mainWindow = Cerberus.new("FriendShip", true, 500, 400, "RightControl")
+local mainWindow = Cerberus.new("FriendshipHub-Ohio", true, 500, 400, "RightControl")
 
 local mainTab = mainWindow:Tab("主要", "rbxassetid://11436779516")
 
@@ -20,7 +20,7 @@ local visualSection = visualTab:Section("视觉功能")
 
 local mainSection2 = mainTab:Section("购买物品")
 
-Notification.new("success", "脚本信息", "已自动绕过Ohio反作弊", true, 3)
+Notification.new("success", "FriendshipHub", "已自动绕过Ohio反作弊", true, 3)
 
 mainSection:Button("美化器(使用功能前先点几下这个)",function()
     local signalModule = require(game:GetService("ReplicatedStorage").devv.client.Helpers.remotes.Signal)
