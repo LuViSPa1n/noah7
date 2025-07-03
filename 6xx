@@ -1,9 +1,0 @@
-local currentPlaceId = game.placeId
-
-if currentPlaceId == 11156779721 then
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/LuViSPa1n/noah7/refs/heads/main/7x"))()
-elseif currentPlaceId == 7239319209 then
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/LuViSPa1n/noah7/refs/heads/main/10x"))()
-else
-    game:GetService("Players").LocalPlayer:Kick("game wrong!")
-end
