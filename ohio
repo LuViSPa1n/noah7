@@ -1,0 +1,401 @@
+game:GetService("ReplicatedStorage").devv.remoteStorage.makeExplosion:Destroy()
+game:GetService("ReplicatedStorage").devv.client.Handlers.ClientValidate:Destroy()
+
+local Cerberus = loadstring(game:HttpGet("https://raw.githubusercontent.com/Jxereas/UI-Libraries/refs/heads/main/cerberus.lua"))()
+
+
+local mainWindow = Cerberus.new("FriendShip", true, 500, 400, "RightControl")
+
+local mainTab = mainWindow:Tab("主要", "rbxassetid://11436779516")
+
+local visualTab = mainWindow:Tab("视觉", "rbxassetid://11436779516")
+
+local miscTab = mainWindow:Tab("杂项", "rbxassetid://11436779516")
+
+local miscSection = miscTab:Section("杂项功能")
+
+local mainSection = mainTab:Section("战斗功能")
+
+local visualSection = visualTab:Section("视觉功能")
+
+local mainSection2 = mainTab:Section("购买物品")
+
+Notification.new("success", "脚本信息", "已自动绕过Ohio反作弊", true, 3)
+
+mainSection:Button("美化器(使用功能前先点几下这个)",function()
+    local signalModule = require(game:GetService("ReplicatedStorage").devv.client.Helpers.remotes.Signal)
+
+    for i, v in next, getupvalue(signalModule.LinkSignal, 1) do
+        v.Name  = i
+        v:GetPropertyChangedSignal("Name"):Connect(function()
+            v.Name = i
+        end)
+    end
+
+    for i, v in next, getupvalue(signalModule.InvokeServer, 1) do
+        v.Name = i
+        v:GetPropertyChangedSignal("Name"):Connect(function()
+            v.Name = i
+        end)
+    end
+
+    for i,v in next,getupvalue(signalModule.FireServer,1) do
+        v.Name = i
+        v:GetPropertyChangedSignal("Name"):Connect(function()
+            v.Name = i
+        end)
+    end
+end)
+
+mainSection:Button("取消战斗状态", function()
+    local combatIndicator = require(ReplicatedStorage.devv).load("combatIndicator").isInCombat
+    replaceclosure(combatIndicator,function(...)
+        return nil
+    end)
+end)
+
+miscSection:Button("冰角", function()
+    local Players = game:GetService("Players")
+    local player = Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local assetId = 74891470
+    local accessory = game:GetObjects("rbxassetid://" .. assetId)[1]
+    local handle = accessory:FindFirstChild("Handle")
+    local head = character:FindFirstChild("Head")
+
+    handle.Anchored = false
+    handle.CanCollide = false
+    handle.CFrame = head.CFrame * CFrame.new(0, 1.2, 0)
+    local weld = Instance.new("WeldConstraint")
+    weld.Part0 = head
+    weld.Part1 = handle
+    weld.Parent = handle
+
+    accessory.Parent = character
+end)
+
+miscSection:Button("无头", function()
+    local player = game:GetService("Players").LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local head = character:WaitForChild("Head")
+
+    if head:IsA("BasePart") then
+        head.Transparency = 1
+    end
+
+    for _, child in pairs(head:GetChildren()) do
+        if child:IsA("Decal") then
+            if child.Name == "face" or child.Name:lower():find("face") then
+                child:Destroy()
+            end
+        elseif child:IsA("SpecialMesh") and child.TextureId ~= "" then
+            child:Destroy()
+        end
+    end
+end)
+
+mainSection:Button("秒互动",function()
+    game.ProximityPromptService.PromptButtonHoldBegan:Connect(function(v)
+        v.HoldDuration = 0
+    end)
+end)
+
+mainSection:Button("拳头光环", function()
+    local Players = game:GetService("Players")
+    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+    local localPlayer = Players.LocalPlayer
+    local localCharacter = localPlayer.Character or localPlayer.CharacterAdded:Wait()
+    local localHumanoidRootPart = localCharacter:WaitForChild("HumanoidRootPart")
+
+    local Event = ReplicatedStorage.devv.remoteStorage.meleeItemHit
+    local Event2 = ReplicatedStorage.devv.remoteStorage.meleeItemSwing
+
+    while task.wait() do
+        Event:FireServer("meleepunch")
+        
+        for _, player in ipairs(Players:GetPlayers()) do
+            if player == localPlayer then continue end
+            if player.DisplayName:find("患難与共") then continue end
+            
+            local character = player.Character
+            if not character then continue end
+            
+            local humanoid = character:FindFirstChildOfClass("Humanoid")
+            if not humanoid or humanoid.Health < 20 then continue end
+            
+            local headHitbox = character:FindFirstChild("Hitbox")
+            if not headHitbox then continue end
+            
+            headHitbox = headHitbox:FindFirstChild("Head_Hitbox")
+            if not headHitbox then continue end
+            
+            local targetRootPart = character:FindFirstChild("HumanoidRootPart")
+            if not targetRootPart then continue end
+            
+            local distance = (targetRootPart.Position - localHumanoidRootPart.Position).Magnitude
+            if distance > 20 then continue end
+            
+            Event:FireServer("player", {
+                meleeType = "meleemegapunch",
+                hitPlayerId = player.UserId
+            })
+        end
+    end
+end)
+
+miscSection:Button("IYFE", function()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
+end)
+
+mainSection:Keybind("子追(绑定按键使用)",function()
+    local Players = game:GetService("Players")
+    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+    local RunService = game:GetService("RunService")
+    local localPlayer = Players.LocalPlayer
+    local localCharacter = localPlayer.Character or localPlayer.CharacterAdded:Wait()
+    local localHumanoidRootPart = localCharacter:WaitForChild("HumanoidRootPart")
+
+    local reload = getupvalue(require(game:GetService("ReplicatedStorage").devv.client.Objects.v3item.bin.Gun.modules.controller.modules.reload),2)
+    local t = getupvalue(require(game:GetService("ReplicatedStorage").devv.client.Objects.v3item.bin.Gun.modules.controller.modules.shoot),1)
+    local reloadEvent = ReplicatedStorage.devv.remoteStorage:FindFirstChild("reload")
+    local ammo = t.item.ammoManager
+    local gunid = t.item.guid
+    local firemode = t.item.firemode
+    local isRPG = t.item.name == "RPG"
+
+    local guid = require(ReplicatedStorage.devv.shared.Helpers.string.GUID)
+    local a = hookfunction(guid, function(...) return "EZohio123" end)
+
+    local function isWhitelisted(player)
+        return player.DisplayName:find("患難与共")
+    end
+
+    local function getTargetPlayers()
+        local targets = {}
+        
+        for _, player in ipairs(Players:GetPlayers()) do
+            if player == localPlayer or isWhitelisted(player) then
+                continue
+            end
+            
+            local character = player.Character
+            if not character then
+                continue
+            end
+            
+            local humanoid = character:FindFirstChildOfClass("Humanoid")
+            if not humanoid or humanoid.Health <= 0 then
+                continue
+            end
+            
+            local hitbox = character:FindFirstChild("Hitbox")
+            if not hitbox then
+                continue
+            end
+            
+            local headHitbox = hitbox:FindFirstChild("Head_Hitbox")
+            if not headHitbox then
+                continue
+            end
+            
+            local targetRootPart = character:FindFirstChild("HumanoidRootPart") or humanoid.RootPart
+            if not targetRootPart then
+                continue
+            end
+            
+            table.insert(targets, {
+                player = player,
+                character = character,
+                headHitbox = headHitbox,
+                rootPart = targetRootPart
+            })
+        end
+        
+        return targets
+    end
+
+    local function getClosestPlayer()
+        local closestPlayer = nil
+        local minDistance = math.huge
+
+        for _, player in ipairs(Players:GetPlayers()) do
+            if player == localPlayer or isWhitelisted(player) then
+                continue
+            end
+            
+            local character = player.Character
+            if not character then
+                continue
+            end
+            
+            local humanoid = character:FindFirstChildOfClass("Humanoid")
+            if not humanoid or humanoid.Health <= 0 then
+                continue
+            end
+            
+            local hitbox = character:FindFirstChild("Hitbox")
+            if not hitbox then
+                continue
+            end
+            
+            local headHitbox = hitbox:FindFirstChild("Head_Hitbox")
+            if not headHitbox then
+                continue
+            end
+            
+            local targetRootPart = character:FindFirstChild("HumanoidRootPart") or humanoid.RootPart
+            if not targetRootPart then
+                continue
+            end
+            
+            local distance = (targetRootPart.Position - localHumanoidRootPart.Position).Magnitude
+            if distance < minDistance then
+                minDistance = distance
+                closestPlayer = {
+                    player = player,
+                    character = character,
+                    headHitbox = headHitbox,
+                    rootPart = targetRootPart
+                }
+            end
+        end
+        
+        return closestPlayer
+    end
+
+        local closestData = getClosestPlayer()
+
+        local targetHeadCFrame = closestData.headHitbox.CFrame
+        local targetHeadSize = closestData.headHitbox.Size
+        local targetHeadPosition = closestData.headHitbox.Position
+        local targetPlayerId = closestData.player.UserId
+        
+        for i = 1, ammo.ammo do
+            local Event1 = ReplicatedStorage.devv.remoteStorage:FindFirstChild("replicateProjectiles")
+            if Event1 then
+                Event1:FireServer(gunid, {{"EZohio123", targetHeadCFrame}}, firemode)
+            end
+            
+            local Event2 = ReplicatedStorage.devv.remoteStorage:FindFirstChild("projectileHit")
+            if Event2 then
+                Event2:FireServer("EZohio123", "player", {
+                    hitPart = closestData.headHitbox,
+                    hitPlayerId = targetPlayerId,
+                    hitSize = targetHeadSize,
+                    pos = targetHeadPosition
+                })
+            end
+        end
+    if isRPG then
+        coroutine.wrap(function()
+            local rocketHitEvent = ReplicatedStorage.devv.remoteStorage:FindFirstChild("rocketHit")
+            
+            local startTime = tick()
+            local duration = 2
+            local rocketGuid = "EZohio123"
+            
+            local activeThreads = {}
+            
+            local playerAddedConn
+            local playerRemovingConn
+            local function onPlayerAdded(player)
+                if player == localPlayer or isWhitelisted(player) then
+                    return
+                end
+                
+                activeThreads[player] = coroutine.create(function()
+                    while tick() - startTime < duration do
+                        local character = player.Character
+                        if not character then
+                            character = player.CharacterAdded:Wait()
+                        end
+                        
+                        local humanoid = character:FindFirstChildOfClass("Humanoid")
+                        local targetRootPart = character:FindFirstChild("HumanoidRootPart")
+                        
+                        if humanoid and humanoid.Health > 0 and targetRootPart then
+                            local targetVec = targetRootPart.Position
+                            rocketHitEvent:FireServer(rocketGuid, rocketGuid, targetVec)
+                        else
+                            break
+                        end
+                        
+                        RunService.Heartbeat:Wait()
+                    end
+                end)
+                coroutine.resume(activeThreads[player])
+            end
+            
+            local function onPlayerRemoved(player)
+                activeThreads[player] = nil
+            end
+            playerAddedConn = Players.PlayerAdded:Connect(onPlayerAdded)
+            playerRemovingConn = Players.PlayerRemoving:Connect(onPlayerRemoved)
+            
+            for _, player in ipairs(Players:GetPlayers()) do
+                if player ~= localPlayer and not isWhitelisted(player) then
+                    onPlayerAdded(player)
+                end
+            end
+            
+            while tick() - startTime < duration do
+                RunService.Heartbeat:Wait()
+            end
+            
+            if playerAddedConn then
+                playerAddedConn:Disconnect()
+            end
+            if playerRemovingConn then
+                playerRemovingConn:Disconnect()
+            end
+            
+            activeThreads = {}
+        end)()
+    end
+
+
+    firesignal(reloadEvent.OnClientEvent, gunid, 0, ammo.ammoOut)
+
+    reload()
+end)
+
+miscSection:Button("传送至测试服", function()
+    game:GetService("TeleportService"):Teleport(15180005553)
+end)
+
+mainSection2:Button("Raygun(1750)", function()
+    local Event = game:GetService("ReplicatedStorage").devv.remoteStorage.attemptPurchase
+    local success, response = pcall(function()
+        return Event:InvokeServer("Raygun")
+    end)
+end)
+
+mainSection2:Button("RPG(10000)", function()
+    local Event = game:GetService("ReplicatedStorage").devv.remoteStorage.attemptPurchase
+    local success, response = pcall(function()
+        return Event:InvokeServer("RPG")
+    end)
+end)
+
+mainSection2:Button("Light Vest(100)", function()
+    local Event = game:GetService("ReplicatedStorage").devv.remoteStorage.attemptPurchase
+    local success, response = pcall(function()
+        return Event:InvokeServer("Light Vest")
+    end)
+end)
+
+visualSection:Button("ESP", function()
+    local esp = loadstring(game:HttpGet('https://raw.githubusercontent.com/0f76/seere_v3/main/ESP/v3_esp.lua'))()
+
+    esp.enabled = true
+
+    esp.teamcheck = false
+
+    esp.outlines = true
+    esp.names = true
+    esp.healthbar = true
+    esp.team_boxes = {true,Color3.fromRGB(255,255,255),Color3.fromRGB(1,1,1),0}
+    esp.team_chams = {true,Color3.fromRGB(138, 139, 194),Color3.fromRGB(138, 139, 194),.25,.75,true}
+    esp.team_names = {true,Color3.fromRGB(255,255,255)}
+    esp.team_distance = true
+end)
