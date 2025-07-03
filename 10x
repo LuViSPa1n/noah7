@@ -3,7 +3,6 @@ game:GetService("ReplicatedStorage").devv.client.Handlers.ClientValidate:Destroy
 
 local Cerberus = loadstring(game:HttpGet("https://raw.githubusercontent.com/Jxereas/UI-Libraries/refs/heads/main/cerberus.lua"))()
 
-
 local mainWindow = Cerberus.new("FriendshipHub-Ohio", true, 500, 400, "RightControl")
 
 local mainTab = mainWindow:Tab("主要", "rbxassetid://11436779516")
