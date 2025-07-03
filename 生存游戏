@@ -1,0 +1,123 @@
+local Cerberus = loadstring(game:HttpGet("https://raw.githubusercontent.com/Jxereas/UI-Libraries/refs/heads/main/cerberus.lua"))()
+
+local Notification = loadstring(game:HttpGet("https://raw.githubusercontent.com/Jxereas/UI-Libraries/refs/heads/main/notification_gui_library.lua"))()
+
+local mainWindow = Cerberus.new("FriendshipHub-生存游戏", true, 500, 400, "RightControl")
+
+local mainTab = mainWindow:Tab("主要", "rbxassetid://11436779516")
+
+local playerTab = mainWindow:Tab("玩家", "rbxassetid://11436779516")
+
+local miscTab = mainWindow:Tab("杂项", "rbxassetid://11436779516")
+
+local mainSection = mainTab:Section("战斗功能")
+
+local playerSection = playerTab:Section("玩家功能")
+
+local miscSection = miscTab:Section("杂项功能")
+
+Notification.new("success", "FriendshipHub", "脚本已成功加载", true, 2)
+
+playerSection:Button("无限体力",function()
+    game:GetService("Players").LocalPlayer.Character.stamina.Disabled = true
+end)
+
+playerSection:Button("无跌落伤害",function()
+    game:GetService("Players").LocalPlayer.Character.fallDamage.Disabled = true
+end)
+
+local killauraToggle = mainSection:Toggle("杀戮光环", function(bool)
+    _G.KillAura = bool
+    if bool then
+        Notification.new("success", "KillAura", "已启用", true, 2)
+    else
+        Notification.new("warning", "KillAura", "已禁用", true, 2)
+    end
+end)
+killauraToggle:Set(false)
+
+task.spawn(function()
+    local Players = game:GetService("Players")
+    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+    local lp = Players.LocalPlayer
+    
+    while task.wait(0.6) do
+        if _G.KillAura and lp.Character then
+            local lph = lp.Character:FindFirstChild("HumanoidRootPart")
+            if not lph then continue end
+            
+            local cr = require(ReplicatedStorage.Crypt)
+            local b, c, x = cr.checkpublickeys()
+            local crypt = cr.crypt
+            local melee = ReplicatedStorage.remoteInterface.interactions.meleePlayer
+            
+            local function getClosestPlayer()
+                local closestPlayer = nil
+                local minDistance = math.huge
+
+                for _, player in ipairs(Players:GetPlayers()) do
+                    if player ~= lp and ((lp.Team == nil and player.Team == nil) or (lp.Team ~= player.Team)) then
+                        local character = player.Character
+                        if not character then continue end
+                        
+                        local humanoid = character:FindFirstChildOfClass("Humanoid")
+                        local part = character:FindFirstChildWhichIsA("BasePart", true)
+                        
+                        if humanoid and humanoid.Health > 0 and part then
+                            local targetRootPart = character:FindFirstChild("HumanoidRootPart") or humanoid.RootPart
+                            if targetRootPart then
+                                local distance = (targetRootPart.Position - lph.Position).Magnitude
+                                if distance < minDistance then
+                                    minDistance = distance
+                                    closestPlayer = {
+                                        player = player,
+                                        character = character,
+                                        rootPart = targetRootPart
+                                    }
+                                end
+                            end
+                        end
+                    end
+                end
+                return closestPlayer
+            end
+            
+            local closestdata = getClosestPlayer()
+            if closestdata then
+                local tool = lp.Character:FindFirstChildWhichIsA("Tool", true)
+                if tool then
+                    melee:FireServer(
+                        tonumber(tool.Name),
+                        crypt(b, math.abs(closestdata.player.UserId) + x, c),
+                        closestdata.rootPart,
+                        lph.CFrame
+                    )
+                end
+            end
+        end
+    end
+end)
+
+miscSection:Button("IYFE", function()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
+end)
+
+miscSection:Button("冰角", function()
+    local Players = game:GetService("Players")
+    local player = Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local assetId = 74891470
+    local accessory = game:GetObjects("rbxassetid://" .. assetId)[1]
+    local handle = accessory:FindFirstChild("Handle")
+    local head = character:FindFirstChild("Head")
+
+    handle.Anchored = false
+    handle.CanCollide = false
+    handle.CFrame = head.CFrame * CFrame.new(0, 1.2, 0)
+    local weld = Instance.new("WeldConstraint")
+    weld.Part0 = head
+    weld.Part1 = handle
+    weld.Parent = handle
+
+    accessory.Parent = character
+end)
